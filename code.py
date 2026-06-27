@@ -36,6 +36,7 @@ import adafruit_minimqtt.adafruit_minimqtt as MQTT
 from adafruit_io.adafruit_io import IO_MQTT
 from adafruit_httpserver import Server, Request, Response, POST
 import mdns
+from version import VERSION
 
 from cptoml import put
 from storage import remount
@@ -437,7 +438,7 @@ def status(request: Request):
         sessions += f',{{"start":"{second_hour:02d}:{start_minute:02d}","duration_s":{session2_s}}}'
     sessions += ']'
     return Response(request,
-        f'{{"status":"ok","valve":"{valve_state}","uptime_s":{uptime},'
+        f'{"status":"ok","version":"{VERSION}","valve":"{valve_state}","uptime_s":{uptime},'
         f'"watered_today_s":{watered_today},'
         f'"duration_s":{duration},"auto_mode":{auto_s},"et0_mm":{et0_s},'
         f'"sessions":{sessions}}}',
