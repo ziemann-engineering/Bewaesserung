@@ -1,0 +1,29 @@
+﻿# Copy to settings.toml and fill in your values
+
+# Wi-Fi
+CIRCUITPY_WIFI_SSID="your-ssid"
+CIRCUITPY_WIFI_PASSWORD="your-password"
+
+# CircuitPython web editor (optional)
+CIRCUITPY_WEB_API_PASSWORD="your-password"
+CIRCUITPY_WEB_API_PORT=8080
+
+# Adafruit IO (optional, for MQTT)
+ADAFRUIT_IO_USERNAME = "your-username"
+ADAFRUIT_IO_KEY = "aio_..."
+MQTT_ENABLED = 0
+
+# Open-Meteo ET0 auto mode
+FORECAST_LAT = "47.37"
+FORECAST_LON = "8.54"
+AUTO_MODE = 0
+MIN_PER_MM_ET0 = 5
+
+# Irrigation schedule
+START_HOUR = 8
+START_MINUTE = 0
+DURATION = 1800
+MIN_DAILY_MINUTES = 2
+MAX_DAILY_MINUTES = 20
+SECOND_WATERING_OFFSET = 12
+LAST_WATERING_DATE = "1970-01-01"

@@ -1,0 +1,14 @@
+﻿# Credentials — never commit
+settings.toml
+
+# CircuitPython runtime / device files
+boot_out.txt
+lib/
+libArchive/
+fonts/
+images/
+System Volume Information/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
