@@ -87,10 +87,26 @@ valve = "zu"
 valve_open_monotonic = time.monotonic() + 3610  # ~1 h safety timer
 active_session_duration = 0  # duration of the currently active watering session (seconds)
 
-# Statistics (in-memory only, reset on reboot)
+# Statistics – persisted to stats.json across reboots
 boot_monotonic = time.monotonic()
-daily_watering = {}  # date_str -> total seconds watered that day (last 7 days)
+daily_watering = {}  # date_str -> total seconds watered that day (up to 365 days)
+try:
+    with open("stats.json", "r") as _f:
+        daily_watering = json.loads(_f.read())
+    print(f"Loaded stats: {len(daily_watering)} days")
+except Exception:
+    pass  # file missing or corrupt – start fresh
 valve_session_start = None  # monotonic time when valve was opened
+
+def save_stats():
+    """Persist daily_watering to stats.json, keeping at most 365 days."""
+    while len(daily_watering) > 365:
+        del daily_watering[sorted(daily_watering.keys())[0]]
+    try:
+        with open("stats.json", "w") as f:
+            f.write(json.dumps(daily_watering))
+    except Exception as e:
+        print(f"Could not save stats: {e}")
 
 def write_toml(key, value):
     try:
@@ -723,9 +739,7 @@ def valve_close():
             t = time.localtime()
             today = f"{t.tm_year:04d}-{t.tm_mon:02d}-{t.tm_mday:02d}"
             daily_watering[today] = daily_watering.get(today, 0) + elapsed
-            # Keep only the 7 most recent days
-            while len(daily_watering) > 7:
-                del daily_watering[sorted(daily_watering.keys())[0]]
+            save_stats()
         update_status()
         RGB[0] = (0,0,0)
 
