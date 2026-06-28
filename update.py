@@ -12,7 +12,10 @@ adafruit_requests session are ready.
 import os
 import gc
 import supervisor
-from version import VERSION
+try:
+    from version import VERSION
+except ImportError:
+    VERSION = "0.0.0"
 
 # ---------------------------------------------------------------------------
 # Files that will be downloaded and overwritten when a new release is found.

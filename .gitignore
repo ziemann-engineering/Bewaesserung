@@ -1,5 +1,6 @@
 ﻿# Credentials — never commit
 settings.toml
+version.py
 
 # CircuitPython runtime / device files
 boot_out.txt

@@ -36,7 +36,10 @@ import adafruit_minimqtt.adafruit_minimqtt as MQTT
 from adafruit_io.adafruit_io import IO_MQTT
 from adafruit_httpserver import Server, Request, Response, POST
 import mdns
-from version import VERSION
+try:
+    from version import VERSION
+except ImportError:
+    VERSION = "0.0.0"
 
 from cptoml import put
 from storage import remount
