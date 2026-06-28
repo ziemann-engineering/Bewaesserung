@@ -16,11 +16,11 @@ from version import VERSION
 
 # ---------------------------------------------------------------------------
 # Files that will be downloaded and overwritten when a new release is found.
+# version.py is written locally from the GitHub release tag after a successful update.
 # ---------------------------------------------------------------------------
 _UPDATE_FILES = (
     "code.py",
     "update.py",
-    "version.py",
     "webpage.html",
 )
 
@@ -56,6 +56,12 @@ def _is_writable():
         return True
     except OSError:
         return False
+
+
+def _write_current_version(tag):
+    """Persist the installed release tag as the local version string."""
+    with open("version.py", "w") as fh:
+        fh.write(f'VERSION = "{tag}"\n')
 
 
 # ---------------------------------------------------------------------------
@@ -135,6 +141,7 @@ def check_and_update(requests_session):
     # 4. Download each file from raw.githubusercontent.com
     # ------------------------------------------------------------------
     any_updated = False
+    all_updated = True
     for filename in _UPDATE_FILES:
         url = _RAW_BASE.format(owner=owner, repo=repo, tag=tag, file=filename)
         print(f"[OTA] Downloading {filename} ...")
@@ -143,6 +150,7 @@ def check_and_update(requests_session):
             if r.status_code != 200:
                 print(f"[OTA]   HTTP {r.status_code} for {filename} – skipping.")
                 r.close()
+                all_updated = False
                 continue
 
             content = r.content
@@ -159,12 +167,22 @@ def check_and_update(requests_session):
 
         except Exception as exc:
             print(f"[OTA]   Failed to update {filename}: {exc}")
+            all_updated = False
 
     # ------------------------------------------------------------------
     # 5. Reload to run the new code
     # ------------------------------------------------------------------
     if any_updated:
-        print(f"[OTA] Update to {tag} complete – reloading device.")
+        if all_updated:
+            try:
+                _write_current_version(tag)
+                print(f"[OTA]   version.py saved ({tag}).")
+            except Exception as exc:
+                print(f"[OTA]   Failed to update version.py: {exc}")
+                return False
+            print(f"[OTA] Update to {tag} complete – reloading device.")
+        else:
+            print("[OTA] Update incomplete – keeping current version and reloading partial update.")
         supervisor.reload()
 
     return any_updated
