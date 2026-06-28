@@ -58,7 +58,9 @@ if not wifi.radio.connected:
 pool = socketpool.SocketPool(wifi.radio)
 requests = adafruit_requests.Session(pool, ssl.create_default_context())
 
-
+# OTA update check – runs once at boot before the main application starts
+from update import check_and_update
+check_and_update(requests)
 
 ### defines ###
 
@@ -438,7 +440,7 @@ def status(request: Request):
         sessions += f',{{"start":"{second_hour:02d}:{start_minute:02d}","duration_s":{session2_s}}}'
     sessions += ']'
     return Response(request,
-        f'{"status":"ok","version":"{VERSION}","valve":"{valve_state}","uptime_s":{uptime},'
+        f'{{"status":"ok","version":"{VERSION}","valve":"{valve_state}","uptime_s":{uptime},'
         f'"watered_today_s":{watered_today},'
         f'"duration_s":{duration},"auto_mode":{auto_s},"et0_mm":{et0_s},'
         f'"sessions":{sessions}}}',
